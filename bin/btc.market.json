@@ -1,1 +1,7 @@
-{"allocation":0.1,"spread":0.01,"buy_diff":"0.05","sell_diff":"0.1","buy_perc":"-0.05","sell_perc":"0.1","size":70,"crypto":"BTC-EUR","last_price":33000,"last_operation":"SELL"}
+{
+    "allocation":0.1,
+    "spread":0.01,
+    "crypto":"BTC-EUR",
+    "last_price":33000,
+    "last_operation":"SELL"
+}
