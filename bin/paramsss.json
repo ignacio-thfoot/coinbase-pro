@@ -1,9 +1,0 @@
-{
-    "auth" : {
-        "apiKey": "7ec41e16df3c6f257b83a3d2a783b806",//
-        "apiSecret": "ovN23mfuyvVfBpErYcRZL7Bok7DG9Ii7++lxNHgDsZ0LaUcUaC89k1YpYg7qiuJIWro26kbiBFUXXjHKDPdMgQ==",
-        "passphrase": "6x1i406peq3",
-        "apiURI": "https://api.pro.coinbase.com",
-        "sandboxURI": "https://api-public.sandbox.pro.coinbase.com"
-    }
-}
