@@ -1,3 +1,4 @@
 /node_modules
 /bin/params.json
 /**/.DS_Store
+bin/params.json
