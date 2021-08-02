@@ -9,18 +9,9 @@ var params = JSON.parse(raw_params);
 var auth = params.auth;
 const authedClient = new CoinbasePro.AuthenticatedClient(auth.apiKey, auth.apiSecret, auth.passphrase, auth.apiURI);
 
-var raw_market = fs.readFileSync('bin/market.json');
+var raw_market = fs.readFileSync('bin/ada.market.json');
 var market = JSON.parse(raw_market);
 
-var getProduct24Hr = function(){
-    authedClient.getProduct24HrStats(market.crypto)
-    .then(data => {
-        return getProduct24Hr = data;
-    }
-    ).catch((e) => {
-            console.log(e);
-        }
-    );
-}
-console.log(getProduct24Hr());
-
+authedClient.getFills({product_id: market.crypto}, (error, response, data) => {
+    console.log(data[0]);
+});

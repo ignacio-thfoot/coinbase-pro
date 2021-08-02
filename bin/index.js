@@ -9,9 +9,9 @@ var params = JSON.parse(raw_params);
 var auth = params.auth;
 const authedClient = new CoinbasePro.AuthenticatedClient(auth.apiKey, auth.apiSecret, auth.passphrase, auth.apiURI);
 
-var minutes = 2, the_interval = minutes * 60 * 1000;
+var minutes = 1, the_interval = minutes * 60 * 1000;
 
-var curAssetIndex = 2;
+var curAssetIndex = 0;
 setInterval(async function() {
     var asset = params.assets[curAssetIndex];
     console.log(`Analizando ${asset}...`);
@@ -23,25 +23,27 @@ setInterval(async function() {
 
     const history = await authedClient.getProductHistoricRates(market.crypto, { granularity: 60 });
 
+    const fills = await authedClient.getFills({product_id: market.crypto});
+
     authedClient.getProductTicker(market.crypto, (error, response, data) => {
         if (error) {
             console.log(error);
         } else {
-            if(market.last_operation == "BUY") {
+            if(fills[0].side == "buy") {
                 // we sell
-                sell(data, market, trans);
-            } else if(market.last_operation == "SELL") {
+                sell(fills[0], asset, data, market, trans);
+            } else if(fills[0].side == "sell") {
                 // we buy
-                buy(asset, data, market, trans);
+                buy(fills[0], data, market, trans);
             }
             
         }
     });
 }, the_interval);
 
-async function buy(asset, data, market, trans) {
+async function buy(lastFill, asset, data, market, trans) {
     let currentPrice = parseFloat(data.price);
-    let lastPrice = parseFloat(market.last_price);
+    let lastPrice = parseFloat(lastFill.price);
     let allocation = parseFloat(market.allocation);
     let spread = parseFloat(market.spread);
 
@@ -79,9 +81,9 @@ async function buy(asset, data, market, trans) {
     console.log("---");
 }
 
-async function sell(asset, data, market, trans) {
+async function sell(lastFill, asset, data, market, trans) {
     let currentPrice = parseFloat(data.price);
-    let lastPrice = parseFloat(market.last_price);
+    let lastPrice = parseFloat(lastFill.price);
     let allocation = parseFloat(market.allocation);
     let spread = parseFloat(market.spread);
 
