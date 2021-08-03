@@ -1,1 +1,5 @@
-{"allocation":0.1,"spread":0.01,"crypto":"LTC-EUR","last_price":122,"last_operation":"SELL"}
+{
+    "allocation":0.1,
+    "spread":0.01,
+    "crypto":"LTC-EUR"
+}

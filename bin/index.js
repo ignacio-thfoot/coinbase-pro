@@ -12,17 +12,22 @@ const authedClient = new CoinbasePro.AuthenticatedClient(auth.apiKey, auth.apiSe
 var minutes = 1, the_interval = minutes * 60 * 1000;
 
 var curAssetIndex = 0;
+const asset = params.assets[curAssetIndex];
+
 setInterval(async function() {
-    var asset = params.assets[curAssetIndex];
+    
     console.log(`Analizando ${asset}...`);
     const raw_market = fs.readFileSync('bin/' + asset + '.market.json');
     const market = JSON.parse(raw_market);
+
+    const balances = await authedClient.getAccounts();
+    const baseBalance = parseFloat(balances.filter(el => { return el.currency == 'EUR' })[0].balance);
+    const assetBalance = parseFloat(balances.filter(el => { return el.currency == asset })[0].balance);
 
     var raw_trans = fs.readFileSync('bin/' + asset + '.transactions.json');
     var trans = JSON.parse(raw_trans);
 
     const history = await authedClient.getProductHistoricRates(market.crypto, { granularity: 60 });
-
     const fills = await authedClient.getFills({product_id: market.crypto});
 
     authedClient.getProductTicker(market.crypto, (error, response, data) => {
@@ -34,9 +39,8 @@ setInterval(async function() {
                 sell(fills[0], asset, data, market, trans);
             } else if(fills[0].side == "sell") {
                 // we buy
-                buy(fills[0], data, market, trans);
-            }
-            
+                buy(fills[0], asset, data, market, trans);
+            }        
         }
     });
 }, the_interval);
@@ -54,6 +58,7 @@ async function buy(lastFill, asset, data, market, trans) {
     const buyVolume = (baseBalance * allocation) / currentPrice;
     
     console.log("COMPRA", {"Precio de compra": buyPrice, "Precio Actual": currentPrice});
+    console.log("Cantidad a utilizar:", baseBalance + "€");
     
     if(buyPrice >= currentPrice) {
         console.log("COMPRAR!", {"Precio Actual": currentPrice });
@@ -71,10 +76,6 @@ async function buy(lastFill, asset, data, market, trans) {
                 console.log("COMPRA HECHA", order);
                 trans.push(order);
                 fs.writeFileSync('bin/transactions.json', JSON.stringify(trans));
-
-                market.last_price = currentPrice;
-                market.last_operation = "BUY";
-                fs.writeFileSync('bin/' + asset + '.market.json', JSON.stringify(market));
             }
         });
     }
@@ -94,8 +95,9 @@ async function sell(lastFill, asset, data, market, trans) {
     const sellVolume = assetBalance * allocation;
     
     console.log("VENTA", {"Precio de venta": sellPrice, "Precio Actual": currentPrice});
+    console.log("Cantidad a utilizar:", assetBalance + " " + asset);
     
-    if(sellPrice <= currentPrice) {
+    if(sellPrice < currentPrice) {
         console.log("VENDER!", {"Precio Actual": currentPrice });
 
         const params = {
@@ -112,10 +114,6 @@ async function sell(lastFill, asset, data, market, trans) {
                 console.log("VENTA HECHA", order);
                 trans.push(order);
                 fs.writeFileSync('bin/' + asset + '.transactions.json', JSON.stringify(trans));
-
-                market.last_price = currentPrice;
-                market.last_operation = "SELL";
-                fs.writeFileSync('bin/' + asset + '.market.json', JSON.stringify(market));
             }
         });
     }

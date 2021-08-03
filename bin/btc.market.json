@@ -1,7 +1,5 @@
 {
     "allocation":0.1,
     "spread":0.01,
-    "crypto":"BTC-EUR",
-    "last_price":33000,
-    "last_operation":"SELL"
+    "crypto":"BTC-EUR"
 }

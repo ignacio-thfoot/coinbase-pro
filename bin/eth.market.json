@@ -1,1 +1,5 @@
-{"allocation":0.1,"spread":0.01,"crypto":"ETH-EUR","last_price":2000,"last_operation":"SELL"}
+{
+    "allocation":0.1,
+    "spread":0.01,
+    "crypto":"ETH-EUR"
+}
