@@ -9,7 +9,7 @@ var params = JSON.parse(raw_params);
 var auth = params.auth;
 const authedClient = new CoinbasePro.AuthenticatedClient(auth.apiKey, auth.apiSecret, auth.passphrase, auth.apiURI);
 
-var minutes = 1, the_interval = minutes * 60 * 1000;
+var minutes = 0.5, the_interval = minutes * 60 * 1000;
 
 var curAssetIndex = 0;
 const asset = params.assets[curAssetIndex];
